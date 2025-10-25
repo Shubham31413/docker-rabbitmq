@@ -1,10 +1,9 @@
-FROM rabbitmq:3-management
+# Use trusted MinIO image
+FROM minio/minio:latest
 
-# Expose RabbitMQ default ports
-EXPOSE 5672 15672
+# Expose MinIO ports
+EXPOSE 9000
+EXPOSE 9001
 
-# Healthcheck to keep Render service active
-HEALTHCHECK CMD rabbitmq-diagnostics -q check_running
-
-# Default command
-CMD ["rabbitmq-server"]
+# Command to start MinIO server
+CMD ["server", "/data", "--console-address", ":9001"]
