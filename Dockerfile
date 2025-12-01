@@ -12,7 +12,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 # Setup pgAdmin configuration
-COPY config_local.py /usr/pgadmin4/web/
+# COPY config_local.py /usr/pgadmin4/web/
 COPY entrypoint.sh /entrypoint.sh
 
 # Render requires an executable entrypoint
