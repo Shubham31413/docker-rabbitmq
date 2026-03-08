@@ -1,2 +1,5 @@
-tmp:
-  val: 1
+databases:
+  - name: gateway-db
+    plan: starter
+    databaseName: gateway_db
+    user: gateway
