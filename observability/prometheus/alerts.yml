@@ -1,0 +1,41 @@
+groups:
+  - name: gateway
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(gateway_requests_total{status=~"5.."}[5m])) by (route)
+          /
+          sum(rate(gateway_requests_total[5m])) by (route)
+          > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Route {{ $labels.route }} error rate > 5%"
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(gateway_requests_duration_bucket[5m])) by (le, route)
+          ) > 2000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Route {{ $labels.route }} p99 > 2s"
+
+      - alert: CircuitBreakerOpen
+        expr: gateway_circuit_breaker_fallback_total > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Circuit breaker open for route {{ $labels.route }}"
+
+      - alert: OutboxBacklog
+        expr: mainapp_outbox_pending > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Outbox has {{ $value }} unpublished events"
